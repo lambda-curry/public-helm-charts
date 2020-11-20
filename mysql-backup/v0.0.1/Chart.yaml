@@ -1,0 +1,15 @@
+apiVersion: v1
+name: mysql-backup-runner
+home: https://github.com/Lambda-Curry/helm-charts
+icon:
+version: 0.0.1
+type: application
+appVersion: latest
+description: 'a system to backup mysql databases to s3, with error alerting to slack'
+keywords:
+  - mysql-backup-runner
+sources:
+  - https://github.com/Lambda-Curry/helm-charts
+maintainers:
+  - name: 'Derek Wene'
+    email: derek@lambdacurry.dev

@@ -1,0 +1,25 @@
+config:
+  image: lambdacurry/mysql-s3-backup
+  tag: latest
+  imagePullPolicy: Always
+
+backup:
+  enabled: true
+  schedule: '0 0 * * *'
+  multiFiles: true
+
+database:
+  host: ''
+  user: ''
+  pass: ''
+
+notifications:
+  slack:
+    webhookUrl: ''
+
+storage:
+  s3:
+    accessKey: ''
+    secretKey: ''
+    prefix: ''
+    bucket: ''

@@ -1,0 +1,96 @@
+categories:
+  - Server
+questions:
+  # Config
+  - variable: config.imagePullPolicy
+    default: Always
+    description: ''
+    type: enum
+    options:
+      - Always
+      - IfNotPresent
+    required: true
+    label: 'pull policy'
+    group: Config
+
+  #Backup
+  - variable: backup.schedule
+    default: '0 0 * * *'
+    description: 'use cron syntax to define how often backups should run'
+    type: string
+    required: true
+    label: 'Cron Schedule'
+    group: Config
+  - variable: backup.enabled
+    default: true
+    type: boolean
+    required: true
+    label: 'Enabled'
+    group: Config
+  - variable: backup.multiFiles
+    default: true
+    description: 'Backup databases individually or as 1 large file'
+    type: boolean
+    required: true
+    label: 'Multi Files'
+    group: Config
+
+  # Database
+  - variable: database.host
+    description: ''
+    type: string
+    required: true
+    label: Mysql Host
+    group: Mysql
+  - variable: database.port
+    default: 3306
+    description: ''
+    type: int
+    required: true
+    label: Mysql Port
+    group: Mysql
+  - variable: database.user
+    description: ''
+    type: string
+    required: true
+    label: Mysql User
+    group: Mysql
+  - variable: database.pass
+    description: ''
+    type: string
+    required: true
+    label: Mysql Password
+    group: Mysql
+
+  # S3
+  - variable: storage.s3.accessKey
+    description: ''
+    type: string
+    required: true
+    label: Access Key
+    group: S3
+  - variable: storage.s3.secretKey
+    description: ''
+    type: string
+    required: true
+    label: Secret Key
+    group: S3
+  - variable: storage.s3.bucket
+    description: ''
+    type: string
+    required: true
+    label: Bucket
+    group: S3
+  - variable: storage.s3.prefix
+    description: 's3 path prefix s3://bucket/$prefix/$files_here'
+    type: string
+    required: true
+    label: Prefix
+    group: S3
+
+  - variable: notifications.slack.webhookUrl
+    description: 'For reporting errors to slack'
+    type: string
+    required: false
+    label: Slack Webhook Url
+    group: S3

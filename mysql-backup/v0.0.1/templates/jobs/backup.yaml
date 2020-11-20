@@ -1,0 +1,54 @@
+{{- if .Values.backup.enabled }}
+apiVersion: batch/v1beta1
+kind: CronJob
+metadata:
+  name: {{ template "mysql-backup-runner.fullname" . }}-cron
+  labels:
+    app: {{ template "mysql-backup-runner.name" . }}-cron
+    chart: {{ .Chart.Name }}-{{ .Chart.Version }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+    helm.sh/chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
+spec:
+  schedule: "{{ .Values.backup.schedule }}"
+  startingDeadlineSeconds: 180
+  jobTemplate:
+    spec:
+      backoffLimit: 2
+      template:
+        metadata:
+          labels:
+            app: {{ template "mysql-backup-runner.name" . }}-cron
+            release: {{ .Release.Name }}
+            app.kubernetes.io/managed-by: {{ .Release.Service | quote }}
+            app.kubernetes.io/instance: {{ .Release.Name | quote }}
+            helm.sh/chart: {{ .Chart.Name }}-{{ .Chart.Version }}
+        spec:
+          restartPolicy: Never
+          containers:
+            - name: backup
+              image: {{ .Values.config.image }}:{{ .Values.config.tag }}
+              imagePullPolicy: {{ .Values.config.imagePullPolicy }}
+              env:
+                - name: S3_ACCESS_KEY_ID
+                  value: {{ .Values.storage.s3.accessKey }}
+                - name: S3_SECRET_ACCESS_KEY
+                  value: {{ .Values.storage.s3.secretKey }}
+                - name: S3_BUCKET
+                  value: {{ .Values.storage.s3.bucket }}
+                - name: S3_PREFIX
+                  value: {{ .Values.storage.s3.prefix }}
+                - name: MYSQL_USER
+                  value: {{ .Values.database.user }}
+                - name: MYSQL_PASSWORD
+                  value: {{ .Values.database.pass }}
+                - name: MYSQL_HOST
+                  value: {{ .Values.database.host }}
+                - name: MYSQL_PORT
+                  value: "{{ .Values.database.port }}"
+                - name: SLACK_WEBHOOK_URL
+                  value: {{ .Values.notifications.slack.webhookUrl }}
+                - name: MULTI_FILES
+                  value: "{{ .Values.backup.multiFiles }}"
+              
+{{- end }}
