@@ -1,13 +1,13 @@
 apiVersion: v1
-name: mysql-backup-runner
+name: mongo-backup-runner
 home: https://github.com/Lambda-Curry/public-helm-charts
 icon:
 version: 0.0.1
 type: application
 appVersion: latest
-description: 'a system to backup mysql databases to s3, with error alerting to slack'
+description: 'a system to backup mongo databases to s3, with error alerting to slack'
 keywords:
-  - mysql-backup-runner
+  - mongo-backup-runner
 sources:
   - https://github.com/Lambda-Curry/public-helm-charts
 maintainers:

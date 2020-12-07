@@ -1,5 +1,5 @@
 FROM alpine:latest
-LABEL maintainer="Johannes Schickling <schickling.j@gmail.com>"
+LABEL maintainer="Derek Wene <derek@lambdacurry.dev>"
 
 ADD install.sh install.sh
 RUN sh install.sh && rm install.sh
