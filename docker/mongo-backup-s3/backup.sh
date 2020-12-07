@@ -1,4 +1,4 @@
-#! /bin/sh
+#! /bin/bash
 
 set -e
 
@@ -29,16 +29,10 @@ if [ "${MONGO_USER}" == "**None**" ]; then
   exit 1
 fi
 
-if [ "${MONGO_PASS}" == "**None**" ]; then
-  echo "You need to set the MONGO_PASS environment variable."
+if [ "${MONGO_PASSWORD}" == "**None**" ]; then
+  echo "You need to set the MONGO_PASSWORD environment variable."
   exit 1
 fi
-
-if [ "${MONGO_AUTH_DB}" == "**None**" ]; then
-  echo "You need to set the MONGO_AUTH_DB environment variable."
-  exit 1
-fi
-
 
 if [ "${S3_IAMROLE}" != "true" ]; then
   # env vars needed for aws tools - only if an IAM role is not used
@@ -47,7 +41,7 @@ if [ "${S3_IAMROLE}" != "true" ]; then
   export AWS_DEFAULT_REGION=$S3_REGION
 fi
 
-MONGO_URI="mongo://${MONGO_USER}:${MONGO_PASS}@${MONGO_HOST}:${MONGO_PORT}/${MONGO_AUTH_DB}"
+MONGO_URI="mongodb://${MONGO_USER}:${MONGO_PASSWORD}@${MONGO_HOST}:${MONGO_PORT}"
 DUMP_START_TIME=$(date +"%Y-%m-%dT%H%M%SZ")
 
 error_notify() {
@@ -82,22 +76,16 @@ copy_s3 () {
 
 # Multi file: yes
 if [ ! -z "$(echo $MULTI_FILES | grep -i -E "(yes|true|1)")" ]; then
-  if [ "${MONGODUMP_DATABASE}" == "**None**" ]; then
-    DATABASES=``
-    DATABASES=`echo "db.getMongo().getDBNames()"|mongo "${MONGO_URI}" --quiet |tr -d \[\] | tr , "\n"|cut -c3-| tr -d \"`
-  else
-    DATABASES=$MONGODUMP_DATABASE
-  fi
+  DATABASES=`echo "db.getMongo().getDBNames()"|mongo "${MONGO_URI}" --quiet |tr -d \[\] | tr , "\n"|cut -c3-| tr -d \"| grep -Ev "(config|local)"`
 
   for DB in $DATABASES; do
     echo "Creating individual dump of ${DB} from ${MONGO_HOST}..."
 
     DUMP_FILE="/tmp/${DB}.gz"
-    
 
-    echo `mongodump "${MONGO_URI}" --db $DB --archive=$DUMP_FILE --gzip`
+    echo "mongodump \"${MONGO_URI}\" --db $DB --archive=$DUMP_FILE --gzip"
 
-    mongodump "${MONGO_URI}" --db $DB --archive=$DUMP_FILE --gzip
+    mongodump "${MONGO_URI}" --authenticationDatabase ${MONGO_AUTH_DATABASE} --db $DB --archive=$DUMP_FILE --gzip
     
     if [ $? != 0 ]; then
       error_notify "Failed to execute mongodump"
@@ -121,8 +109,8 @@ else
 
   DUMP_FILE="/tmp/all.gz"
 
-  echo "mongodump "${MONGO_URI}" --archive=$DUMP_FILE --gzip"
-  mongodump "${MONGO_URI}" --db $DB --archive=$DUMP_FILE --gzip
+  echo "mongodump \"${MONGO_URI}\" --archive=$DUMP_FILE --gzip"
+  mongodump "${MONGO_URI}" --authenticationDatabase ${MONGO_AUTH_DATABASE} --archive=$DUMP_FILE --gzip
 
   if [ $? == 0 ]; then
     if [ "${S3_FILENAME}" == "**None**" ]; then
