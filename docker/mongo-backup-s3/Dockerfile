@@ -19,7 +19,6 @@ ENV S3_PREFIX 'backup'
 ENV S3_FILENAME **None**
 ENV MULTI_FILES no
 
-COPY backup.sh /usr/local/bin/backup
-
+ADD backup.sh backup.sh
 
 CMD ["sh", "backup.sh"]
