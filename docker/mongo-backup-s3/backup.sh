@@ -41,7 +41,7 @@ if [ "${S3_IAMROLE}" != "true" ]; then
   export AWS_DEFAULT_REGION=$S3_REGION
 fi
 
-MONGO_URI="mongodb://${MONGO_USER}:${MONGO_PASSWORD}@${MONGO_HOST}:${MONGO_PORT}"
+MONGO_URI="mongodb://${MONGO_USER}:${MONGO_PASSWORD}@${MONGO_HOST}:${MONGO_PORT}/?replicaSet=mongo"
 DUMP_START_TIME=$(date +"%Y-%m-%dT%H%M%SZ")
 
 error_notify() {
@@ -78,12 +78,14 @@ copy_s3 () {
 if [ ! -z "$(echo $MULTI_FILES | grep -i -E "(yes|true|1)")" ]; then
   DATABASES=`echo "db.getMongo().getDBNames()"|mongo "${MONGO_URI}" --quiet |tr -d \[\] | tr , "\n"|cut -c3-| tr -d \"| grep -Ev "(config|local)"`
 
+  echo "databases " ${DATABASES}
+
   for DB in $DATABASES; do
     echo "Creating individual dump of ${DB} from ${MONGO_HOST}..."
 
     DUMP_FILE="/tmp/${DB}.gz"
 
-    echo "mongodump \"${MONGO_URI}\" --db $DB --archive=$DUMP_FILE --gzip"
+    echo "mongodump \"${MONGO_URI}\" --authenticationDatabase ${MONGO_AUTH_DATABASE} --db $DB --archive=$DUMP_FILE --gzip"
 
     mongodump "${MONGO_URI}" --authenticationDatabase ${MONGO_AUTH_DATABASE} --db $DB --archive=$DUMP_FILE --gzip
     
@@ -93,9 +95,9 @@ if [ ! -z "$(echo $MULTI_FILES | grep -i -E "(yes|true|1)")" ]; then
 
     if [ $? == 0 ]; then
       if [ "${S3_FILENAME}" == "**None**" ]; then
-        S3_FILE="${DUMP_START_TIME}.${DB}.gz"
+        S3_FILE="${DB}/${DUMP_START_TIME}.${DB}.gz"
       else
-        S3_FILE="${S3_FILENAME}.${DB}.gz"
+        S3_FILE="${DB}/${S3_FILENAME}.${DB}.gz"
       fi
 
       copy_s3 $DUMP_FILE $S3_FILE
