@@ -46,7 +46,7 @@ Calculate ghost hostname
 Calculate ghost base url
 */}}
 {{- define "ghost.ghost-base-url" }}
-{{- if (and .Values.config.ghost.baseUrl (not (empty .Values.config.ghost.baseUrl))) }}
+{{- if (and (not .Values.ingress.ghost.enabled ) (and .Values.config.ghost.baseUrl (not (empty .Values.config.ghost.baseUrl)))) }}
 {{- printf .Values.config.ghost.baseUrl }}
 {{- else }}
 {{- if .Values.ingress.ghost.enabled }}
