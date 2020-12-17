@@ -81,20 +81,24 @@ questions:
     type: int
     required: true
     label: 'Port'
+    group: 'Database'
   - variable: db.user
     description: ''
     type: string
     required: true
     label: 'user'
+    group: 'Database'
   - variable: db.password
     description: ''
     type: string
     required: true
     label: 'password'
+    group: 'Database'
   - variable: db.database
     description: ''
     type: string
     required: true
+    group: 'Database'
     label: 'database name'
 
   # Mail
@@ -136,6 +140,11 @@ questions:
         type: string
         required: true
         label: 'password'
+      - variable: mail.from
+        description: ''
+        type: string
+        required: true
+        label: 'from email address'
 
   # Persistence
   - variable: persistence.enabled
