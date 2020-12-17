@@ -46,9 +46,9 @@ service:
 ingress:
   ghost:
     certificate: ''
-    enabled: false
-    hostname: ''
-    tls: false
+    enabled: true
+    hostname: 'gatsbystarter.lambdacurry.dev'
+    tls: true
     issuer:
       name: letsencrypt-staging
 

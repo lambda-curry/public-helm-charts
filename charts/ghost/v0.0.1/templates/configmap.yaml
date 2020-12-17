@@ -20,7 +20,7 @@ data:
           "database": {{.Values.db.database | quote}}
         }
       },
-      "url": "{{ template "ghost.ghost-base-url" }}",
+      "url": "https://{{ .Values.ingress.ghost.hostname }}",
       "server": {
         "port": 2368,
         "host": "0.0.0.0"

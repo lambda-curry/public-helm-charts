@@ -46,15 +46,6 @@ Calculate ghost hostname
 Calculate ghost base url
 */}}
 {{- define "ghost.ghost-base-url" }}
-{{- if (and (not .Values.ingress.ghost.enabled ) (and .Values.config.ghost.baseUrl (not (empty .Values.config.ghost.baseUrl)))) }}
-{{- printf .Values.config.ghost.baseUrl }}
-{{- else }}
-{{- if .Values.ingress.ghost.enabled }}
-{{- $hostname := ((empty (include "ghost.ghost-hostname" .)) | ternary .Values.ingress.ghost.hostname (include "ghost.ghost-hostname" .)) }}
-{{- $protocol := (.Values.ingress.ghost.tls | ternary "https" "http") }}
-{{- printf "%s://%s" $protocol $hostname }}
-{{- else }}
-{{- printf "http://%s" (include "ghost.ghost-hostname" .) }}
-{{- end }}
-{{- end }}
+{{- $hostname := .Values.ingress.ghost.hostname }}
+{{- printf "https://" .Values.ingress.ghost.hostname }}
 {{- end }}
