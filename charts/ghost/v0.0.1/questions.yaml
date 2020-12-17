@@ -1,0 +1,254 @@
+categories:
+  - Server
+questions:
+  # Config
+  - variable: config.clusterProvider
+    default: infrastructure
+    description: ''
+    type: enum
+    options:
+      - infrastructure
+      - eks
+      - aks
+      - gke
+    required: true
+    label: 'cluster provider'
+    group: Config
+  - variable: config.imagePullPolicy
+    default: Always
+    description: ''
+    type: enum
+    options:
+      - Always
+      - IfNotPresent
+    required: true
+    label: 'pull policy'
+    group: Config
+  - variable: config.updateStrategy
+    default: Recreate
+    description: ''
+    type: enum
+    options:
+      - Recreate
+      - RollingUpdate
+      - OnDelete
+    required: true
+    label: 'update strategy'
+    group: Config
+  - variable: config.ghost.resources.defaults
+    default: true
+    description: ''
+    type: boolean
+    required: true
+    label: 'ghost resources defaults'
+    show_subquestion_if: false
+    group: Config
+    subquestions:
+      - variable: config.ghost.resources.requests.cpu
+        default: 100m
+        description: ''
+        type: string
+        required: true
+        label: 'ghost resources requests cpu'
+      - variable: config.ghost.resources.requests.memory
+        default: 128Mi
+        description: ''
+        type: string
+        required: true
+        label: 'ghost resources requests memory'
+      - variable: config.ghost.resources.limits.cpu
+        default: 500m
+        description: ''
+        type: string
+        required: true
+        label: 'ghost resources limits cpu'
+      - variable: config.ghost.resources.limits.memory
+        default: 256Mi
+        description: ''
+        type: string
+        required: true
+        label: 'ghost resources limits memory'
+
+  # Mail
+  - variable: db.host
+    description: ''
+    type: string
+    required: true
+    label: 'host'
+    group: 'Database'
+  - variable: db.port
+    description: ''
+    type: int
+    required: true
+    label: 'Port'
+  - variable: db.user
+    description: ''
+    type: string
+    required: true
+    label: 'user'
+  - variable: db.password
+    description: ''
+    type: string
+    required: true
+    label: 'password'
+  - variable: db.database
+    description: ''
+    type: string
+    required: true
+    label: 'database name'
+
+  # Mail
+  - variable: mail.enabled
+    default: false
+    description: 'Use SMTP to send mail'
+    type: boolean
+    required: true
+    label: enabled
+    show_subquestion_if: true
+    group: Mail
+    subquestions:
+      - variable: mail.service
+        default: SES
+        description: ''
+        required: true
+        label: size
+        type: enum
+        options:
+          - SES
+          - Mailgun
+      - variable: mail.host
+        description: 'Host to use'
+        type: string
+        required: true
+        label: 'Host'
+      - variable: mail.port
+        description: ''
+        type: int
+        required: true
+        label: 'Port'
+      - variable: mail.auth.user
+        description: ''
+        type: string
+        required: true
+        label: 'user'
+      - variable: mail.auth.password
+        description: ''
+        type: string
+        required: true
+        label: 'password'
+
+  # Persistence
+  - variable: persistence.enabled
+    default: false
+    description: ''
+    type: boolean
+    required: true
+    label: enabled
+    show_subquestion_if: true
+    group: Persistence
+    subquestions:
+      - variable: persistence.size
+        default: 1Gi
+        description: ''
+        type: string
+        required: true
+        label: size
+      - variable: persistence.storageClass
+        default: ''
+        description: ''
+        type: storageclass
+        required: false
+        label: 'storage class'
+      - variable: persistence.accessMode
+        default: ReadWriteOnce
+        description: ''
+        type: enum
+        options:
+          - ReadWriteOnce
+          - ReadWriteMany
+          - ReadOnlyMany
+        required: false
+        label: 'access mode'
+      - variable: persistence.existingClaim
+        default: ''
+        description: ''
+        type: string
+        required: false
+        label: 'existing claim'
+
+  # Services and Load Balancing
+  - variable: ingress.ghost.enabled
+    default: true
+    description: ''
+    type: boolean
+    label: 'ghost ingress enabled'
+    show_subquestion_if: true
+    group: 'Services and Load Balancing'
+    subquestions:
+      - variable: ingress.ghost.tls
+        default: false
+        description: ''
+        type: boolean
+        required: true
+        label: 'ghost ingress tls'
+      - variable: ingress.ghost.hostname
+        default: xip.io
+        description: ''
+        type: hostname
+        required: true
+        label: 'ghost ingress hostname'
+      - variable: ingress.ghost.issuer.name
+        default: letsencrypt-staging
+        description: ''
+        type: enum
+        show_if: ingress.ghost.tls=true
+        options:
+          - none
+          - letsencrypt-staging
+          - letsencrypt-prod
+        required: true
+        label: 'ghost ingress issuer name'
+      - variable: ingress.ghost.certificate
+        default: ''
+        description: ''
+        type: string
+        show_if: ingress.ghost.tls=true&&ingress.ghost.issuer.name=none
+        required: false
+        label: 'ghost ingress certificate'
+  - variable: service.ghost.type
+    default: NodePort
+    description: ''
+    type: enum
+    show_if: ingress.ghost.enabled=false
+    options:
+      - ClusterIP
+      - NodePort
+      - LoadBalancer
+    required: true
+    label: 'ghost service type'
+    group: 'Services and Load Balancing'
+  - variable: service.ghost.ports.http
+    default: ''
+    description: ''
+    type: int
+    min: 30000
+    max: 32767
+    show_if: service.ghost.type!=ClusterIP&&ingress.ghost.enabled=false
+    label: 'ghost http port'
+    group: 'Services and Load Balancing'
+
+  # Images
+  - variable: images.ghost.repository
+    default: dwene/ghost
+    description: ''
+    type: string
+    required: true
+    label: 'ghost repository'
+    group: Images
+  - variable: images.ghost.tag
+    default: 3.15-alpine
+    description: ''
+    type: string
+    required: true
+    label: 'ghost tag'
+    group: Images

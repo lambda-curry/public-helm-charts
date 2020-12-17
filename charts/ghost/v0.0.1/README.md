@@ -1,0 +1,3 @@
+# ghost
+
+> Ghost blog

@@ -1,0 +1,57 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ template "ghost.fullname" . }}-config
+  labels:
+    app: {{ template "ghost.name" . }}
+    chart: {{ .Chart.Name }}-{{ .Chart.Version }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+data:
+  config.production.json: |-
+    {
+      "database": {
+        "client": "mysql",
+        "connection": {
+          "host": {{ .Values.db.host | quote }},
+          "port": {{ .Values.db.port }},
+          "password": {{ .Values.db.password | quote }},
+          "user": {{ .Values.db.user | quote }},
+          "database": {{.Values.db.database | quote}}
+        }
+      },
+      "url": "{{ template "ghost.ghost-base-url" }}",
+      "server": {
+        "port": 2368,
+        "host": "0.0.0.0"
+      },
+      {{- if .Values.mail.enabled }}
+      "mail": {
+        "from": {{ .Values.mail.from | quote }},
+        "transport": "SMTP",
+        "options": {
+          "host": {{ .Values.mail.host | quote }},
+          "port": {{ .Values.mail.port | quote }},
+          "service": {{.Values.mail.service | quote }},
+          "auth": {
+            "user": {{ .Values.mail.auth.user | quote }},
+            "pass": {{ .Values.mail.auth.password | quote }}
+          }
+        }
+      },
+      {{- end }}
+      "logging": {
+        "path": "/var/log/ghost",
+        "level": "info",
+        "rotation": {
+          "enabled": true,
+          "count": 15,
+          "period": "1d"
+        },
+        "transports": ["stdout", "file"]
+      },
+      "process": "local",
+      "paths": {
+        "contentPath": "/var/lib/ghost/content"
+      }
+    }

@@ -1,0 +1,61 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ template "ghost.fullname" . }}-ghost
+  labels:
+    app: {{ template "ghost.name" . }}-ghost
+    chart: {{ .Chart.Name }}-{{ .Chart.Version }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+spec:
+  selector:
+    matchLabels:
+      app: {{ template "ghost.name" . }}-ghost
+      release: {{ .Release.Name }}
+  strategy:
+    type: {{ .Values.config.updateStrategy }}
+  template:
+    metadata:
+      labels:
+        app: {{ template "ghost.name" . }}-ghost
+        release: {{ .Release.Name }}
+      {{- if .Values.persistence.velero.enabled }}
+      annotations:
+        backup.velero.io/backup-volumes: data
+      {{- end }}
+    spec:
+      containers:
+        - name: {{ template "ghost.fullname" . }}-ghost
+          image: {{ .Values.images.ghost.repository }}:{{ .Values.images.ghost.tag }}
+          imagePullPolicy: {{ .Values.config.imagePullPolicy }}
+          resources:
+            requests:
+              cpu: {{ .Values.config.ghost.resources.requests.cpu }}
+              memory: {{ .Values.config.ghost.resources.requests.memory }}
+            limits:
+              cpu: {{ .Values.config.ghost.resources.limits.cpu }}
+              memory: {{ .Values.config.ghost.resources.limits.memory }}
+          ports:
+            - name: container
+              containerPort: 2368
+          env: []
+          volumeMounts:
+          - mountPath: /var/lib/ghost/config.production.json
+            name: config
+            subPath: config.production.json
+          - mountPath: /var/lib/ghost/content
+            name: content
+      volumes:
+        - configMap:
+            defaultMode: 511
+            name: {{ template "ghost.fullname" . }}-config
+            optional: false
+          name: config
+      {{- if .Values.persistence.enabled }}
+        - name: content
+          persistentVolumeClaim:
+            claimName: {{ template "ghost.fullname" . }}-pvc        
+      {{- else }}
+        - name: content
+          emptyDir: {}
+      {{- end }}

@@ -1,0 +1,15 @@
+apiVersion: v1
+name: ghost
+home: https://github.com/lambda-curry/public-helm-charts
+icon: https://user-images.githubusercontent.com/120485/43974508-b64b2fe8-9cd2-11e8-8e58-707254b8817c.png
+version: 0.0.1
+type: application
+appVersion: latest
+description: 'Ghost blog'
+keywords:
+  - ghost
+sources:
+  - https://github.com/lambda-curry/public-helm-charts
+maintainers:
+  - name: 'Derek Wene'
+    email: derek@lambdacurry.dev

@@ -1,0 +1,77 @@
+images:
+  ghost:
+    repository: dwene/ghost
+    tag: 3.15-alpine
+
+config:
+  clusterProvider: infrastructure
+  imagePullPolicy: Always
+  updateStrategy: Recreate
+  ghost:
+    baseUrl: ''
+    hostname: ''
+    resources:
+      requests:
+        cpu: 100m
+        memory: 128Mi
+      limits:
+        cpu: 500m
+        memory: 256Mi
+  configProductionJson: ''
+
+mail:
+  enabled: false
+  from: 'nobody@gmail.com'
+  service: 'SES'
+  host: ''
+  port: 465
+  auth:
+    user: ''
+    password: ''
+
+db:
+  host: ''
+  port: 3306
+  user: 'root'
+  password: ''
+  database: 'ghost'
+
+service:
+  ghost:
+    type: NodePort
+    externalTrafficPolicy: Cluster
+    ports:
+      http: ''
+
+ingress:
+  ghost:
+    certificate: ''
+    enabled: false
+    hostname: ''
+    tls: false
+    issuer:
+      name: letsencrypt-staging
+
+persistence:
+  accessMode: ReadWriteOnce
+  enabled: false
+  existingClaim: ''
+  size: 1Gi
+  storageClass: ''
+  velero:
+    enabled: true
+    schedule: ''
+
+probes:
+  liveness:
+    initialDelaySeconds: 120
+    periodSeconds: 10
+    timeoutSeconds: 5
+    failureThreshold: 6
+    successThreshold: 1
+  readiness:
+    initialDelaySeconds: 30
+    periodSeconds: 10
+    timeoutSeconds: 5
+    failureThreshold: 6
+    successThreshold: 1

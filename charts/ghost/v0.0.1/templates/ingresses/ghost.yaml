@@ -1,0 +1,35 @@
+{{- if .Values.ingress.ghost.enabled }}
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: {{ template "ghost.fullname" . }}-ghost
+  annotations:
+    kubernetes.io/ingress.class: nginx
+    {{- if .Values.ingress.ghost.tls }}
+    {{- if (empty .Values.ingress.ghost.certificate) }}
+    cert-manager.io/cluster-issuer: {{ .Values.ingress.ghost.issuer.name }}
+    kubernetes.io/tls-acme: 'true'
+    {{- end }}
+    nginx.ingress.kubernetes.io/ssl-redirect: 'true'
+    {{- end }}
+  labels:
+    app: {{ template "ghost.name" . }}-ghost
+    chart: {{ .Chart.Name }}-{{ .Chart.Version }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+spec:
+  rules:
+    - host: {{ .Values.ingress.ghost.hostname }}
+      http:
+        paths:
+          - path: /
+            backend:
+              serviceName: {{ template "ghost.fullname" . }}-ghost
+              servicePort: http
+  {{- if .Values.ingress.ghost.tls }}
+  tls:
+    - secretName: {{ template "ghost.ghost-certificate" . }}
+      hosts:
+        - {{ .Values.ingress.ghost.hostname }}
+  {{- end }}
+{{- end }}

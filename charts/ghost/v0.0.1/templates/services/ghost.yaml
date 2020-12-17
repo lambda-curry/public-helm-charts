@@ -1,0 +1,28 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ template "ghost.fullname" . }}-ghost
+  labels:
+    app: {{ template "ghost.name" . }}-ghost
+    chart: {{ .Chart.Name }}-{{ .Chart.Version }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+spec:
+  {{- if .Values.ingress.ghost.enabled }}
+  type: ClusterIP
+  {{- else }}
+  type: {{ .Values.service.ghost.type }}
+  {{- if (or (eq .Values.service.ghost.type "LoadBalancer") (eq .Values.service.ghost.type "NodePort")) }}
+  externalTrafficPolicy: {{ .Values.service.ghost.externalTrafficPolicy }}
+  {{- end }}
+  {{- end }}
+  ports:
+    - name: http
+      port: {{ (and (eq .Values.service.ghost.type "LoadBalancer") (not (empty .Values.service.ghost.ports.http))) | ternary .Values.service.ghost.ports.http "80" }}
+      targetPort: container
+      {{- if (and (eq .Values.service.ghost.type "NodePort") (not (empty .Values.service.ghost.ports.http))) }}
+      nodePort: {{ .Values.service.ghost.ports.http }}
+      {{- end }}
+  selector:
+    app: {{ template "ghost.name" . }}-ghost
+    release: {{ .Release.Name }}
