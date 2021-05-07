@@ -1,0 +1,19 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ template "directus.fullname" . }}
+  labels:
+    app: {{ .Release.Name }}
+    chart: {{ .Chart.Name }}-{{ .Chart.Version }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+data:
+  db_client: {{ .Values.config.dbClient | quote }}
+  db_host: {{ .Values.config.dbHost | quote }}
+  db_port: {{ .Values.config.dbPort | quote }}
+  db_database: {{ .Values.config.dbDatabase | quote }}
+  db_user: {{ .Values.config.dbUser | quote }}
+  cache_enabled: {{ .Values.config.cacheEnabled | quote }}
+  cache_store: {{ .Values.config.cacheStore | quote }}
+  cache_redis: {{ .Values.config.cacheRedis | quote }}
+  admin_email: {{ .Values.config.adminEmail | quote }}
