@@ -45,7 +45,7 @@ spec:
               containerPort: 8055
           volumeMounts:
             - name: data
-              mountPath: '/data'
+              mountPath: '/directus/uploads'
               subPath: directus
           envFrom:
             - secretRef:
