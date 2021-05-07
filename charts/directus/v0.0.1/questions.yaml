@@ -88,9 +88,12 @@ questions:
     label: 'config secret'
     group: Config
   - variable: config.dbClient
-    default: pg
+    default: postgres
     description: ''
     type: enum
+    options:
+      - postgres
+      - mysql
     required: true
     label: 'database client'
     group: Config
@@ -140,12 +143,15 @@ questions:
     default: redis
     description: ''
     type: enum
+    options:
+      - redis
+      - memcache
     required: false
     label: 'cache store type'
     group: Config
   - variable: config.cacheRedis
     default:
-    description: ''
+    description: 'redis://:authpassword@127.0.0.1:6380/4'
     type: string
     required: false
     label: 'redis url'
