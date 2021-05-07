@@ -73,26 +73,19 @@ questions:
         type: string
         required: true
         label: 'directus resources limits memory'
-  - variable: config.directus
-    default: ''
-    description: ''
-    type: string
-    required: false
-    label: directus
-    group: Config
   - variable: config.key
     default:
-    description: ''
+    description: 'secret string for the project'
     type: string
     required: true
-    label: SECRET
+    label: 'config key'
     group: Config
   - variable: config.secret
     default:
     description: ''
     type: string
     required: true
-    label: SECRET
+    label: 'config secret'
     group: Config
   - variable: config.dbClient
     default: pg
