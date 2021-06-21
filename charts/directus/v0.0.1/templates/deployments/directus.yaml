@@ -54,7 +54,7 @@ spec:
             {{- $v := rest $kv | join "=" -}}
             {{- if $k }}
             - name: {{ $k }}
-              value: {{ $v | quote }}
+              value: {{ $v }}
             {{- end }}
           {{- end }}
           livenessProbe:
