@@ -73,104 +73,16 @@ questions:
         type: string
         required: true
         label: 'directus resources limits memory'
-  - variable: config.key
-    default:
-    description: 'secret string for the project'
-    type: string
-    required: true
-    label: 'config key'
-    group: Config
-  - variable: config.secret
-    default:
-    description: ''
-    type: string
-    required: true
-    label: 'config secret'
-    group: Config
-  - variable: config.dbClient
-    default: postgres
-    description: ''
-    type: enum
-    options:
-      - postgres
-      - mysql
-    required: true
-    label: 'database client'
-    group: Config
-  - variable: config.dbHost
-    default:
-    description: ''
-    type: string
-    required: true
-    label: DB_HOST
-    group: Config
-  - variable: config.dbPort
-    default: 5432
-    description: ''
-    type: int
-    required: true
-    label: 'database port'
-    group: Config
-  - variable: config.dbDatabase
-    default:
-    description: ''
-    type: string
-    required: true
-    label: 'database name'
-    group: Config
-  - variable: config.dbUser
-    default:
-    description: ''
-    type: string
-    required: true
-    label: 'database user'
-    group: Config
-  - variable: config.dbPassword
-    default:
-    description: ''
-    type: password
-    required: true
-    label: 'database password'
-    group: Config
-  - variable: config.cacheEnabled
-    default: false
-    description: ''
-    type: boolean
-    required: true
-    label: 'cache enabled'
-    group: Config
-  - variable: config.cacheStore
-    default: redis
-    description: ''
-    type: enum
-    options:
-      - redis
-      - memcache
+  # Config
+  - variable: config.env
+    default: |
+      ADMIN_EMAIL=admin@directus.io
+      ADMIN_PASSWORD=passw0rd
+    description: 'use key=value syntax, like .env'
+    type: multiline
     required: false
-    label: 'cache store type'
+    label: 'environment variables'
     group: Config
-  - variable: config.cacheRedis
-    default:
-    description: 'redis://:authpassword@127.0.0.1:6380/4'
-    type: string
-    required: false
-    label: 'redis url'
-    group: Config
-  - variable: config.adminEmail
-    default: admin@example.com
-    description: ''
-    type: string
-    required: true
-    label: 'admin user email'
-    group: Config
-  - variable: config.adminPassword
-    default: d1r3ctu5
-    description: ''
-    type: password
-    required: true
-    label: 'admin user password'
-    group: Config
-
   # Persistence
   - variable: persistence.enabled
     default: false

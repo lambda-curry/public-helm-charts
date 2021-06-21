@@ -4,6 +4,9 @@ images:
     tag: v9-rc.61
 
 config:
+  env: |
+    ADMIN_PASSWORD=d1r3ctu5
+    ADMIN_EMAIL=admin@example.com
   clusterType: rke
   imagePullPolicy: Always
   updateStrategy: Recreate
@@ -18,19 +21,6 @@ config:
       limits:
         cpu: 500m
         memory: 256Mi
-  key: ''
-  secret: ''
-  dbClient: 'pg'
-  dbHost: ''
-  dbPort: '5432'
-  dbDatabase: ''
-  dbUser: ''
-  dbPassword: ''
-  cacheEnabled: 'false'
-  cacheStore: 'redis'
-  cacheRedis: ''
-  adminEmail: 'admin@example.com'
-  adminPassword: 'd1r3ctu5'
 
 service:
   directus:

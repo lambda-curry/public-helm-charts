@@ -47,13 +47,16 @@ spec:
             - name: data
               mountPath: '/directus/uploads'
               subPath: directus
-          envFrom:
-            - secretRef:
-                name: {{ template "directus.fullname" . }}
-                optional: false
-            - configMapRef:
-                name: {{ template "directus.fullname" . }}
-                optional: false
+          env:
+          {{- range $line := splitList "\n" .Values.config.env }}
+            {{- $kv := splitList "=" $line -}}
+            {{- $k := first $kv -}}
+            {{- $v := rest $kv | join "=" -}}
+            {{- if $k }}
+            - name: {{ $k }}
+              value: {{ $v }}
+            {{- end }}
+          {{- end }}
           livenessProbe:
             tcpSocket:
               port: container
