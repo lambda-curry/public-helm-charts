@@ -12,6 +12,9 @@ metadata:
     {{- end }}
     nginx.ingress.kubernetes.io/ssl-redirect: 'true'
     {{- end }}
+    ingress.kubernetes.io/proxy-body-size: 50m
+    nginx.ingress.kubernetes.io/proxy-body-size: 50m
+    nginx.org/client-max-body-size: 10m
   labels:
     app: {{ .Release.Name }}
     chart: {{ .Chart.Name }}-{{ .Chart.Version }}
