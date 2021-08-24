@@ -1,0 +1,1 @@
+docker build . -t lambdacurry/n8n && docker push lambdacurry/n8n
