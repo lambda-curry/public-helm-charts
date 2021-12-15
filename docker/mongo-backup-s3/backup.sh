@@ -15,22 +15,8 @@ if [ "${S3_BUCKET}" == "**None**" ]; then
   exit 1
 fi
 
-if [ "${MONGO_HOST}" == "**None**" ]; then
-  echo "You need to set the MONGO_HOST environment variable."
-  exit 1
-fi
-
-if [ "${MONGO_PORT}" == "**None**" ]; then
-  export MONGO_PORT=27017
-fi
-
-if [ "${MONGO_USER}" == "**None**" ]; then
-  echo "You need to set the MONGO_USER environment variable."
-  exit 1
-fi
-
-if [ "${MONGO_PASSWORD}" == "**None**" ]; then
-  echo "You need to set the MONGO_PASSWORD environment variable."
+if [ "${MONGO_URI}" == "**None**" ]; then
+  echo "You need to set the MONGO_URI environment variable."
   exit 1
 fi
 
@@ -41,7 +27,6 @@ if [ "${S3_IAMROLE}" != "true" ]; then
   export AWS_DEFAULT_REGION=$S3_REGION
 fi
 
-MONGO_URI="mongodb://${MONGO_USER}:${MONGO_PASSWORD}@${MONGO_HOST}:${MONGO_PORT}/?replicaSet=mongo"
 DUMP_START_TIME=$(date +"%Y-%m-%dT%H%M%SZ")
 
 error_notify() {
@@ -81,7 +66,7 @@ if [ ! -z "$(echo $MULTI_FILES | grep -i -E "(yes|true|1)")" ]; then
   echo "databases " ${DATABASES}
 
   for DB in $DATABASES; do
-    echo "Creating individual dump of ${DB} from ${MONGO_HOST}..."
+    echo "Creating individual dump of ${DB}..."
 
     DUMP_FILE="/tmp/${DB}.gz"
 
@@ -107,7 +92,7 @@ if [ ! -z "$(echo $MULTI_FILES | grep -i -E "(yes|true|1)")" ]; then
   done
 # Multi file: no
 else
-  echo "Creating dump for ${MONGODUMP_DATABASE} from ${MONGO_HOST}..."
+  echo "Creating dump for ${MONGODUMP_DATABASE}..."
 
   DUMP_FILE="/tmp/all.gz"
 
