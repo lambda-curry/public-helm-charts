@@ -1,0 +1,15 @@
+apiVersion: v1
+name: directus
+home: https://github.com/Lambda-Curry/public-helm-charts
+icon: https://avatars.githubusercontent.com/u/15967950?s=200&v=4
+version: 0.1.1
+type: application
+appVersion: latest
+description: 'Chart for NodeJS flavor of Directus'
+keywords:
+  - directus
+sources:
+  - https://github.com/Lambda-Curry/public-helm-charts
+maintainers:
+  - name: 'Derek Wene'
+    email: derek@lambdacurry.dev

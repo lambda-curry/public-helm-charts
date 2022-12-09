@@ -1,0 +1,75 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ template "directus.fullname" . }}-directus
+  labels:
+    app: {{ .Release.Name }}
+    chart: {{ .Chart.Name }}-{{ .Chart.Version }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+spec:
+  selector:
+    matchLabels:
+      app: {{ template "directus.name" . }}-directus
+      release: {{ .Release.Name }}
+  strategy:
+    type: {{ .Values.config.updateStrategy }}
+  template:
+    metadata:
+      labels:
+        app: {{ template "directus.name" . }}-directus
+        release: {{ .Release.Name }}
+    spec:
+      affinity:
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+            - weight: 90
+              podAffinityTerm:
+                topologyKey: kubernetes.io/hostname
+                labelSelector:
+                  matchExpressions:
+                    - key: app
+                      operator: In
+                      values:
+                        - {{ template "directus.name" . }}-directus
+      containers:
+        - name: {{ template "directus.fullname" . }}-directus
+          image: {{ .Values.images.directus.repository }}:{{ .Values.images.directus.tag }}
+          imagePullPolicy: {{ .Values.config.imagePullPolicy }}
+{{- if (and .Values.config.directus.resources.enabled (not (eq .Values.config.directus.resources.enabled "false"))) }}
+          resources:
+{{ toYaml .Values.config.directus.resources | indent 12 }}
+{{- end }}
+          ports:
+            - name: container
+              containerPort: 8055
+          volumeMounts:
+            - name: data
+              mountPath: '/directus/uploads'
+              subPath: directus
+          env:
+          {{- range $line := splitList "\n" .Values.config.env }}
+            {{- $kv := splitList "=" $line -}}
+            {{- $k := first $kv -}}
+            {{- $v := rest $kv | join "=" -}}
+            {{- if $k }}
+            - name: {{ $k }}
+              value: {{ $v }}
+            {{- end }}
+          {{- end }}
+          livenessProbe:
+            tcpSocket:
+              port: container
+{{ toYaml .Values.probes.liveness | indent 12 }}
+          readinessProbe:
+            tcpSocket:
+              port: container
+{{ toYaml .Values.probes.readiness | indent 12 }}
+      volumes:
+        - name: data
+          {{- if .Values.persistence.enabled }}
+          persistentVolumeClaim:
+            claimName: {{ .Values.persistence.existingClaim.directus | default (printf "%s-directus" (include "directus.fullname" . )) }}
+          {{- else }}
+          emptyDir: {}
+          {{- end }}
